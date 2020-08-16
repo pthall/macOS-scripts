@@ -1,0 +1,28 @@
+#!/bin/bash
+# $1: action - restore-plugins; disable-plugins
+DISABLE_DIRS=( Accessibility.acroplugin Comments.acroplugin MakeAccessible.acroplugin Multimedia.acroplugin SendMail.acroplugin )
+export PLUGINS_DIR="/Applications/Adobe Acrobat Reader 2020.app/Contents/Plugins"
+export DISABLED_PLUGINS_DIR="/Applications/Adobe Acrobat Reader 2020.app/Contents/Disabled Plugins"
+
+case "$1" in
+  disable-plugins)
+    set -x
+    [[ ! -e "$DISABLED_PLUGINS_DIR" ]] && sudo mkdir "$DISABLED_PLUGINS_DIR"
+
+    for dir in "${DISABLE_DIRS[@]}" ; do
+      [[ -d "$PLUGINS_DIR/$dir" ]] && sudo mv -f "$PLUGINS_DIR/$dir" "$DISABLED_PLUGINS_DIR/"
+    done
+    ;;
+
+  restore-plugins)
+    # move disabled plugins not already in the plugins dir;
+    # remove disabled plugins also in the plugins dir
+    find -d "$DISABLED_PLUGINS_DIR" -depth 1 -exec sh -c \
+      'set -x; \
+      if [[ ! -e "$PLUGINS_DIR/$(basename "{}")" ]]; then \
+        sudo mv "{}" "$PLUGINS_DIR/"; \
+      else
+        sudo rm -r "{}"; \
+      fi' \;
+    ;;
+esac
