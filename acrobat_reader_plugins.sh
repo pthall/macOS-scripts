@@ -12,7 +12,7 @@ case "$1" in
 
     # must delete any dirs already in DISABLED_PLUGINS_DIR before moving PLUGINS_DIR dirs
     for dir in "${DISABLE_DIRS[@]}" ; do
-      [[ -d "$DISABLED_PLUGINS_DIR/$dir" ]] && [[ -d "$PLUGINS_DIR/$dir" ]] && rm -rf "$DISABLED_PLUGINS_DIR/$dir"
+      [[ -d "$DISABLED_PLUGINS_DIR/$dir" ]] && [[ -d "$PLUGINS_DIR/$dir" ]] && sudo rm -rf "$DISABLED_PLUGINS_DIR/$dir"
       [[ -d "$PLUGINS_DIR/$dir" ]] && sudo mv "$PLUGINS_DIR/$dir" "$DISABLED_PLUGINS_DIR/"
     done
     ;;
