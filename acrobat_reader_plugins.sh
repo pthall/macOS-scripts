@@ -6,14 +6,16 @@ export DISABLED_PLUGINS_DIR="/Applications/Adobe Acrobat Reader 2020.app/Content
 
 set -x
 
+[[ "$EUID" == 0 ]] || echo "need to run as root"; exit 1
+
 case "$1" in
   disable-plugins)
-    [[ ! -e "$DISABLED_PLUGINS_DIR" ]] && sudo mkdir "$DISABLED_PLUGINS_DIR"
+    [[ ! -e "$DISABLED_PLUGINS_DIR" ]] && mkdir "$DISABLED_PLUGINS_DIR"
 
     # must delete any dirs already in DISABLED_PLUGINS_DIR before moving PLUGINS_DIR dirs
     for dir in "${DISABLE_DIRS[@]}" ; do
-      [[ -d "$DISABLED_PLUGINS_DIR/$dir" ]] && [[ -d "$PLUGINS_DIR/$dir" ]] && sudo rm -rf "$DISABLED_PLUGINS_DIR/$dir"
-      [[ -d "$PLUGINS_DIR/$dir" ]] && sudo mv "$PLUGINS_DIR/$dir" "$DISABLED_PLUGINS_DIR/"
+      [[ -d "$DISABLED_PLUGINS_DIR/$dir" ]] && [[ -d "$PLUGINS_DIR/$dir" ]] && rm -rf "$DISABLED_PLUGINS_DIR/$dir"
+      [[ -d "$PLUGINS_DIR/$dir" ]] && mv "$PLUGINS_DIR/$dir" "$DISABLED_PLUGINS_DIR/"
     done
     ;;
 
@@ -22,9 +24,9 @@ case "$1" in
     # remove disabled plugins also in the plugins dir
     find -d "$DISABLED_PLUGINS_DIR" -depth 1 -exec sh -c \
       'if [[ ! -e "$PLUGINS_DIR/$(basename "{}")" ]]; then \
-        sudo mv "{}" "$PLUGINS_DIR/"; \
+        mv "{}" "$PLUGINS_DIR/"; \
       else
-        sudo rm -rf "{}"; \
+        rm -rf "{}"; \
       fi' \;
     ;;
 esac
