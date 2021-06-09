@@ -6,7 +6,7 @@ export DISABLED_PLUGINS_DIR="/Applications/Adobe Acrobat Reader 2020.app/Content
 
 set -x
 
-[[ "$EUID" == 0 ]] || echo "need to run as root"; exit 1
+[[ "$EUID" == 0 ]] || { echo "need to run as root"; exit 1; }
 
 case "$1" in
   disable-plugins)
